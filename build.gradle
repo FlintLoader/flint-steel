@@ -28,7 +28,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 group = 'net.flintloader'
 archivesBaseName = project.name
-def baseVersion = '0.5'
+def baseVersion = '0.1'
 
 def ENV = System.getenv()
 if (ENV.BUILD_NUMBER) {
