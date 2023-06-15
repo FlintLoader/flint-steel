@@ -1,0 +1,347 @@
+/*
+ * This file is part of flint-steel, licensed under the MIT License (MIT).
+ *
+ * Copyright (c) 2016-2021 FabricMC
+ * Copyright (c) 2016-2022 HypherionSA and Contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package net.flintloader.steel.configuration;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+import org.gradle.api.NamedDomainObjectProvider;
+import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.tasks.AbstractCopyTask;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.api.tasks.javadoc.Javadoc;
+
+import net.flintloader.steel.SteelGradleExtension;
+import net.flintloader.steel.build.mixin.GroovyApInvoker;
+import net.flintloader.steel.build.mixin.JavaApInvoker;
+import net.flintloader.steel.build.mixin.KaptApInvoker;
+import net.flintloader.steel.build.mixin.ScalaApInvoker;
+import net.flintloader.steel.configuration.accesswidener.AccessWidenerJarProcessor;
+import net.flintloader.steel.configuration.accesswidener.TransitiveAccessWidenerJarProcessor;
+import net.flintloader.steel.configuration.ifaceinject.InterfaceInjectionProcessor;
+import net.flintloader.steel.configuration.processors.JarProcessorManager;
+import net.flintloader.steel.configuration.processors.ModuleJavadocProcessor;
+import net.flintloader.steel.configuration.providers.mappings.MappingsProviderImpl;
+import net.flintloader.steel.configuration.providers.minecraft.MinecraftJarConfiguration;
+import net.flintloader.steel.configuration.providers.minecraft.MinecraftProvider;
+import net.flintloader.steel.configuration.providers.minecraft.MinecraftSourceSets;
+import net.flintloader.steel.configuration.providers.minecraft.mapped.IntermediaryMinecraftProvider;
+import net.flintloader.steel.configuration.providers.minecraft.mapped.NamedMinecraftProvider;
+import net.flintloader.steel.extension.MixinExtension;
+import net.flintloader.steel.util.Checksum;
+import net.flintloader.steel.util.Constants;
+import net.flintloader.steel.util.ExceptionUtil;
+import net.flintloader.steel.util.gradle.GradleUtils;
+import net.flintloader.steel.util.gradle.SourceSetHelper;
+
+public final class CompileConfiguration {
+	private CompileConfiguration() {
+	}
+
+	public static void setupConfigurations(Project project) {
+		final ConfigurationContainer configurations = project.getConfigurations();
+		final SteelGradleExtension extension = SteelGradleExtension.get(project);
+
+		configurations.register(Constants.Configurations.MOD_COMPILE_CLASSPATH, configuration -> configuration.setTransitive(true));
+		configurations.register(Constants.Configurations.MOD_COMPILE_CLASSPATH_MAPPED, configuration -> configuration.setTransitive(false));
+		NamedDomainObjectProvider<Configuration> serverDeps = configurations.register(Constants.Configurations.MINECRAFT_SERVER_DEPENDENCIES, configuration -> configuration.setTransitive(false));
+		configurations.register(Constants.Configurations.MINECRAFT_RUNTIME_DEPENDENCIES, configuration -> configuration.setTransitive(false));
+		configurations.register(Constants.Configurations.MINECRAFT_DEPENDENCIES, configuration -> {
+			configuration.extendsFrom(serverDeps.get());
+			configuration.setTransitive(false);
+		});
+		configurations.register(Constants.Configurations.LOADER_DEPENDENCIES, configuration -> configuration.setTransitive(false));
+		configurations.register(Constants.Configurations.MINECRAFT, configuration -> configuration.setTransitive(false));
+		configurations.register(Constants.Configurations.INCLUDE, configuration -> configuration.setTransitive(false)); // Dont get transitive deps
+		configurations.register(Constants.Configurations.MAPPING_CONSTANTS);
+		configurations.register(Constants.Configurations.NAMED_ELEMENTS, configuration -> {
+			configuration.setCanBeConsumed(true);
+			configuration.setCanBeResolved(false);
+			configuration.extendsFrom(configurations.getByName(JavaPlugin.API_CONFIGURATION_NAME));
+		});
+
+		extendsFrom(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, Constants.Configurations.MAPPING_CONSTANTS, project);
+
+		configurations.register(Constants.Configurations.MAPPINGS);
+		configurations.register(Constants.Configurations.MAPPINGS_FINAL);
+		configurations.register(Constants.Configurations.STEEL_DEVELOPMENT_DEPENDENCIES);
+		configurations.register(Constants.Configurations.UNPICK_CLASSPATH);
+		configurations.register(Constants.Configurations.LOCAL_RUNTIME);
+		extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.LOCAL_RUNTIME, project);
+
+		extension.createRemapConfigurations(SourceSetHelper.getMainSourceSet(project));
+
+		extendsFrom(Constants.Configurations.LOADER_DEPENDENCIES, Constants.Configurations.MINECRAFT_DEPENDENCIES, project);
+
+		extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.MAPPINGS_FINAL, project);
+		extendsFrom(JavaPlugin.TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.MAPPINGS_FINAL, project);
+
+		extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.STEEL_DEVELOPMENT_DEPENDENCIES, project);
+		extendsFrom(JavaPlugin.TEST_RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.STEEL_DEVELOPMENT_DEPENDENCIES, project);
+
+		extendsFrom(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME, Constants.Configurations.MINECRAFT_RUNTIME_DEPENDENCIES, project);
+
+		// Add the dev time dependencies
+		project.getDependencies().add(Constants.Configurations.STEEL_DEVELOPMENT_DEPENDENCIES, Constants.Dependencies.DEV_LAUNCH_INJECTOR + Constants.Dependencies.Versions.DEV_LAUNCH_INJECTOR);
+		project.getDependencies().add(Constants.Configurations.STEEL_DEVELOPMENT_DEPENDENCIES, Constants.Dependencies.TERMINAL_CONSOLE_APPENDER + Constants.Dependencies.Versions.TERMINAL_CONSOLE_APPENDER);
+		project.getDependencies().add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, Constants.Dependencies.JETBRAINS_ANNOTATIONS + Constants.Dependencies.Versions.JETBRAINS_ANNOTATIONS);
+		project.getDependencies().add(JavaPlugin.TEST_COMPILE_ONLY_CONFIGURATION_NAME, Constants.Dependencies.JETBRAINS_ANNOTATIONS + Constants.Dependencies.Versions.JETBRAINS_ANNOTATIONS);
+	}
+
+	public static void configureCompile(Project project) {
+		SteelGradleExtension extension = SteelGradleExtension.get(project);
+
+		project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class).configure(javadoc -> {
+			final SourceSet main = SourceSetHelper.getMainSourceSet(project);
+			javadoc.setClasspath(main.getOutput().plus(main.getCompileClasspath()));
+		});
+
+		GradleUtils.afterSuccessfulEvaluation(project, () -> {
+			MinecraftSourceSets.get(project).afterEvaluate(project);
+
+			final boolean previousRefreshDeps = extension.refreshDeps();
+
+			if (getAndLock(project)) {
+				project.getLogger().lifecycle("Found existing cache lock file, rebuilding steel cache. This may have been caused by a failed or canceled build.");
+				extension.setRefreshDeps(true);
+			}
+
+			try {
+				setupMinecraft(project);
+			} catch (Exception e) {
+				throw ExceptionUtil.createDescriptiveWrapper(RuntimeException::new, "Failed to setup Minecraft", e);
+			}
+
+			SteelDependencyManager dependencyManager = new SteelDependencyManager();
+			extension.setDependencyManager(dependencyManager);
+			dependencyManager.handleDependencies(project);
+
+			releaseLock(project);
+			extension.setRefreshDeps(previousRefreshDeps);
+
+			MixinExtension mixin = SteelGradleExtension.get(project).getMixin();
+
+			if (mixin.getUseLegacyMixinAp().get()) {
+				setupMixinAp(project, mixin);
+			}
+
+			configureDecompileTasks(project);
+		});
+
+		finalizedBy(project, "idea", "genIdeaWorkspace");
+		finalizedBy(project, "eclipse", "genEclipseRuns");
+		finalizedBy(project, "cleanEclipse", "cleanEclipseRuns");
+
+		// Add the "dev" jar to the "namedElements" configuration
+		project.artifacts(artifactHandler -> artifactHandler.add(Constants.Configurations.NAMED_ELEMENTS, project.getTasks().named("jar")));
+
+		// Ensure that the encoding is set to UTF-8, no matter what the system default is
+		// this fixes some edge cases with special characters not displaying correctly
+		// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+		project.getTasks().withType(AbstractCopyTask.class).configureEach(abstractCopyTask -> abstractCopyTask.setFilteringCharset(StandardCharsets.UTF_8.name()));
+		project.getTasks().withType(JavaCompile.class).configureEach(javaCompile -> javaCompile.getOptions().setEncoding(StandardCharsets.UTF_8.name()));
+
+		if (project.getPluginManager().hasPlugin("org.jetbrains.kotlin.kapt")) {
+			// If loom is applied after kapt, then kapt will use the AP arguments too early for loom to pass the arguments we need for mixin.
+			throw new IllegalArgumentException("flint-steel must be applied BEFORE kapt in the plugins { } block.");
+		}
+	}
+
+	// This is not thread safe across projects synchronize it here just to be sure, might be possible to move this further down, but for now this will do.
+	private static synchronized void setupMinecraft(Project project) throws Exception {
+		final SteelGradleExtension extension = SteelGradleExtension.get(project);
+		final MinecraftJarConfiguration jarConfiguration = extension.getMinecraftJarConfiguration().get();
+
+		// Provide the vanilla mc jars -- TODO share across projects.
+		final MinecraftProvider minecraftProvider = jarConfiguration.getMinecraftProviderFunction().apply(project);
+		extension.setMinecraftProvider(minecraftProvider);
+		minecraftProvider.provide();
+
+		final DependencyInfo mappingsDep = DependencyInfo.create(project, Constants.Configurations.MAPPINGS);
+		final MappingsProviderImpl mappingsProvider = MappingsProviderImpl.getInstance(project, mappingsDep, minecraftProvider);
+		extension.setMappingsProvider(mappingsProvider);
+		mappingsProvider.applyToProject(project, mappingsDep);
+
+		// Provide the remapped mc jars
+		final IntermediaryMinecraftProvider<?> intermediaryMinecraftProvider = jarConfiguration.getIntermediaryMinecraftProviderBiFunction().apply(project, minecraftProvider);
+		NamedMinecraftProvider<?> namedMinecraftProvider = jarConfiguration.getNamedMinecraftProviderBiFunction().apply(project, minecraftProvider);
+
+		final JarProcessorManager jarProcessorManager = createJarProcessorManager(project);
+
+		if (jarProcessorManager.active()) {
+			// Wrap the named MC provider for one that will provide the processed jars
+			namedMinecraftProvider = jarConfiguration.getProcessedNamedMinecraftProviderBiFunction().apply(namedMinecraftProvider, jarProcessorManager);
+		}
+
+		extension.setIntermediaryMinecraftProvider(intermediaryMinecraftProvider);
+		intermediaryMinecraftProvider.provide(true);
+
+		extension.setNamedMinecraftProvider(namedMinecraftProvider);
+		namedMinecraftProvider.provide(true);
+	}
+
+	private static JarProcessorManager createJarProcessorManager(Project project) {
+		final SteelGradleExtension extension = SteelGradleExtension.get(project);
+
+		if (extension.getAccessWidenerPath().isPresent()) {
+			extension.getGameJarProcessors().add(new AccessWidenerJarProcessor(project));
+		}
+
+		if (extension.getEnableTransitiveAccessWideners().get()) {
+			TransitiveAccessWidenerJarProcessor transitiveAccessWidenerJarProcessor = new TransitiveAccessWidenerJarProcessor(project);
+
+			if (!transitiveAccessWidenerJarProcessor.isEmpty()) {
+				extension.getGameJarProcessors().add(transitiveAccessWidenerJarProcessor);
+			}
+		}
+
+		if (extension.getInterfaceInjection().isEnabled()) {
+			InterfaceInjectionProcessor jarProcessor = new InterfaceInjectionProcessor(project);
+
+			if (!jarProcessor.isEmpty()) {
+				extension.getGameJarProcessors().add(jarProcessor);
+			}
+		}
+
+		if (extension.getEnableModProvidedJavadoc().get()) {
+			// This doesn't do any processing on the compiled jar, but it does have an effect on the generated sources.
+			final ModuleJavadocProcessor javadocProcessor = ModuleJavadocProcessor.create(project);
+
+			if (javadocProcessor != null) {
+				extension.getGameJarProcessors().add(javadocProcessor);
+			}
+		}
+
+		JarProcessorManager processorManager = new JarProcessorManager(extension.getGameJarProcessors().get());
+		extension.setJarProcessorManager(processorManager);
+		processorManager.setupProcessors();
+
+		return processorManager;
+	}
+
+	private static void setupMixinAp(Project project, MixinExtension mixin) {
+		mixin.init();
+
+		// Disable some things used by log4j via the mixin AP that prevent it from being garbage collected
+		System.setProperty("log4j2.disable.jmx", "true");
+		System.setProperty("log4j.shutdownHookEnabled", "false");
+		System.setProperty("log4j.skipJansi", "true");
+
+		project.getLogger().info("Configuring compiler arguments for Java");
+
+		new JavaApInvoker(project).configureMixin();
+
+		if (project.getPluginManager().hasPlugin("scala")) {
+			project.getLogger().info("Configuring compiler arguments for Scala");
+			new ScalaApInvoker(project).configureMixin();
+		}
+
+		if (project.getPluginManager().hasPlugin("org.jetbrains.kotlin.kapt")) {
+			project.getLogger().info("Configuring compiler arguments for Kapt plugin");
+			new KaptApInvoker(project).configureMixin();
+		}
+
+		if (project.getPluginManager().hasPlugin("groovy")) {
+			project.getLogger().info("Configuring compiler arguments for Groovy");
+			new GroovyApInvoker(project).configureMixin();
+		}
+	}
+
+	private static void configureDecompileTasks(Project project) {
+		final SteelGradleExtension extension = SteelGradleExtension.get(project);
+
+		extension.getMinecraftJarConfiguration().get().getDecompileConfigurationBiFunction()
+				.apply(project, extension.getNamedMinecraftProvider()).afterEvaluation();
+	}
+
+	private static Path getLockFile(Project project) {
+		final SteelGradleExtension extension = SteelGradleExtension.get(project);
+		final Path cacheDirectory = extension.getFiles().getUserCache().toPath();
+		final String pathHash = Checksum.toHex(project.getProjectDir().getAbsolutePath().getBytes(StandardCharsets.UTF_8)).substring(0, 16);
+		return cacheDirectory.resolve("." + pathHash + ".lock");
+	}
+
+	private static boolean getAndLock(Project project) {
+		final Path lock = getLockFile(project);
+
+		if (Files.exists(lock)) {
+			return true;
+		}
+
+		try {
+			Files.createFile(lock);
+		} catch (IOException e) {
+			throw new UncheckedIOException("Failed to acquire project configuration lock", e);
+		}
+
+		return false;
+	}
+
+	private static void releaseLock(Project project) {
+		final Path lock = getLockFile(project);
+
+		if (!Files.exists(lock)) {
+			return;
+		}
+
+		try {
+			Files.delete(lock);
+		} catch (IOException e1) {
+			try {
+				// If we failed to delete the lock file, moving it before trying to delete it may help.
+				final Path del = lock.resolveSibling(lock.getFileName() + ".del");
+				Files.move(lock, del);
+				Files.delete(del);
+			} catch (IOException e2) {
+				var exception = new UncheckedIOException("Failed to release project configuration lock", e2);
+				exception.addSuppressed(e1);
+				throw exception;
+			}
+		}
+	}
+
+	public static void extendsFrom(List<String> parents, String b, Project project) {
+		for (String parent : parents) {
+			extendsFrom(parent, b, project);
+		}
+	}
+
+	public static void extendsFrom(String a, String b, Project project) {
+		project.getConfigurations().getByName(a, configuration -> configuration.extendsFrom(project.getConfigurations().getByName(b)));
+	}
+
+	private static void finalizedBy(Project project, String a, String b) {
+		project.getTasks().named(a).configure(task -> task.finalizedBy(project.getTasks().named(b)));
+	}
+}
