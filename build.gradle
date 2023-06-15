@@ -222,7 +222,7 @@ publishing {
 				Node groupId = dependency.appendChild(document.createElement('groupId'))
 				groupId.setTextContent('net.flintloader')
 				Node artifactId = dependency.appendChild(document.createElement('artifactId'))
-				artifactId.setTextContent('flint-steel')
+				artifactId.setTextContent('steel')
 				Node version = dependency.appendChild(document.createElement('version'))
 				version.setTextContent(baseVersion + '-SNAPSHOT')
 			})
