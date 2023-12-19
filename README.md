@@ -8,14 +8,14 @@ This project is NOT endorsed by or affiliated with Fabric, and you cannot use it
 
 ***
 
-A [Gradle](https://gradle.org/) plugin to setup a deobfuscated development environment for Minecraft mods. Primarily used in the Flint Loader toolchain.
+A [Gradle](https://gradle.org/) plugin to set up a deobfuscated development environment for Minecraft mods. Primarily used in the Flint Loader toolchain.
 
 * Has built in support for tiny mappings (Used by [Yarn](https://github.com/FabricMC/yarn))
 * Utilises the Fernflower and CFR decompilers to generate source code with comments.
 * Designed to support modern versions of Minecraft (Tested with 1.19 and upwards)
 * Built in support for IntelliJ IDEA, Eclipse and Visual Studio Code to generate run configurations for Minecraft.
-* Steel targets the latest version of Gradle 7 or newer 
-* Supports Java 16 upwards
+* Steel targets the latest version of Gradle 8.3 or newer 
+* Supports Java 17 upwards
 
 ## Use Steel to develop mods
 
