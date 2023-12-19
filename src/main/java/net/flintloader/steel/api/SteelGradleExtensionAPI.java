@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021-2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -85,7 +85,7 @@ public interface SteelGradleExtensionAPI {
 	 * Optionally register and configure a {@link ModuleSettings} object. The name should match the modid.
 	 * This is generally only required when the mod spans across multiple classpath directories, such as when using split sourcesets.
 	 */
-	void mods(Action<NamedDomainObjectContainer<ModuleSettings>> action);
+	void modules(Action<NamedDomainObjectContainer<ModuleSettings>> action);
 
 	NamedDomainObjectContainer<ModuleSettings> getModules();
 
@@ -132,7 +132,7 @@ public interface SteelGradleExtensionAPI {
 	 *
 	 * @return the version defined in the flintmodule.json
 	 */
-	String getModVersion();
+	String getModuleVersion();
 
 	/**
 	 * When true steel will apply transitive access wideners from compile dependencies.
@@ -146,7 +146,7 @@ public interface SteelGradleExtensionAPI {
 	 *
 	 * @return the property controlling the mod provided javadoc
 	 */
-	Property<Boolean> getEnableModProvidedJavadoc();
+	Property<Boolean> getEnableModuleProvidedJavadoc();
 
 	@ApiStatus.Experimental
 	IntermediateMappingsProvider getIntermediateMappingsProvider();
@@ -194,5 +194,5 @@ public interface SteelGradleExtensionAPI {
 
 	Property<Boolean> getRuntimeOnlyLog4j();
 
-	Property<Boolean> getSplitModDependencies();
+	Property<Boolean> getSplitModuleDependencies();
 }

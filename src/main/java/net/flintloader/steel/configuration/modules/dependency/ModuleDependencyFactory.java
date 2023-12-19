@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ public class ModuleDependencyFactory {
 	private static final String TARGET_ATTRIBUTE_KEY = "steel-target";
 
 	public static ModuleDependency create(ArtifactRef artifact, Configuration targetConfig, @Nullable Configuration targetClientConfig, String mappingsSuffix, Project project) {
-		if (targetClientConfig != null && SteelGradleExtension.get(project).getSplitModDependencies().get()) {
+		if (targetClientConfig != null && SteelGradleExtension.get(project).getSplitModuleDependencies().get()) {
 			final Optional<JarSplitter.Target> cachedTarget = readTarget(artifact);
 			JarSplitter.Target target;
 

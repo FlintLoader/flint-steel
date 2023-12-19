@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import net.fabricmc.mappingio.format.Tiny2Writer;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.FileCollectionDependency;
@@ -54,7 +56,6 @@ import net.flintloader.steel.util.ZipUtils;
 
 import net.fabricmc.mappingio.adapter.MappingDstNsReorder;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.Tiny2Writer;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public class LayeredMappingsDependency implements SelfResolvingDependency, FileCollectionDependency {

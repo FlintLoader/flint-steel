@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2019-2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,7 +66,7 @@ public class ModuleConfigurationRemapper {
 	// This can happen when the dependency is a FileCollectionDependency or from a flatDir repository.
 	public static final String MISSING_GROUP = "unspecified";
 
-	public static void supplyModConfigurations(Project project, String mappingsSuffix, SteelGradleExtension extension, SourceRemapper sourceRemapper) {
+	public static void supplyModuleConfigurations(Project project, String mappingsSuffix, SteelGradleExtension extension, SourceRemapper sourceRemapper) {
 		final DependencyHandler dependencies = project.getDependencies();
 
 		for (RemapConfigurationSettings entry : extension.getRemapConfigurations()) {

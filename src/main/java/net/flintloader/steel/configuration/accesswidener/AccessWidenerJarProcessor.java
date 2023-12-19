@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2020-2021 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ public class AccessWidenerJarProcessor implements JarProcessor {
 	// Filename used to store hash of input access widener in processed jar file
 	private static final String HASH_FILENAME = "aw.sha256";
 	// The mod's own access widener file
-	private byte[] modAccessWidener;
+	private byte[] moduleAccessWidener;
 	private final AccessWidener accessWidener = new AccessWidener();
 	private final Project project;
 	// This is a SHA256 hash across the mod's and all transitive AWs
@@ -69,7 +69,7 @@ public class AccessWidenerJarProcessor implements JarProcessor {
 
 		// Read our own mod's access widener, used later for producing a version remapped to intermediary
 		try {
-			modAccessWidener = Files.readAllBytes(awPath);
+			moduleAccessWidener = Files.readAllBytes(awPath);
 		} catch (NoSuchFileException e) {
 			throw new RuntimeException("Could not find access widener file @ " + awPath.toAbsolutePath());
 		} catch (IOException e) {
@@ -77,9 +77,9 @@ public class AccessWidenerJarProcessor implements JarProcessor {
 		}
 
 		AccessWidenerReader reader = new AccessWidenerReader(accessWidener);
-		reader.read(modAccessWidener);
+		reader.read(moduleAccessWidener);
 
-		inputHash = Hashing.sha256().hashBytes(modAccessWidener).asBytes();
+		inputHash = Hashing.sha256().hashBytes(moduleAccessWidener).asBytes();
 	}
 
 	@Override

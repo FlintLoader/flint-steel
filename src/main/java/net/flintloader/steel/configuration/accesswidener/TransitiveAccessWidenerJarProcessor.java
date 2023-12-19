@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2020-2021 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -115,7 +115,7 @@ public class TransitiveAccessWidenerJarProcessor implements JarProcessor {
 				continue;
 			}
 
-			AccessWidenerFile accessWidener = AccessWidenerFile.fromModJar(path);
+			AccessWidenerFile accessWidener = AccessWidenerFile.fromModuleJar(path);
 
 			if (accessWidener == null) {
 				continue;

@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import net.fabricmc.mappingio.format.ProGuardReader;
+
 import org.gradle.api.logging.Logger;
 
 import net.flintloader.steel.api.mappings.layered.MappingLayer;
@@ -42,7 +44,6 @@ import net.flintloader.steel.configuration.providers.mappings.utils.DstNameFilte
 
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.ProGuardReader;
 
 public record MojangMappingLayer(Path clientMappings, Path serverMappings, boolean nameSyntheticMembers,
 									Logger logger) implements MappingLayer {

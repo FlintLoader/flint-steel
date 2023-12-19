@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,11 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Stopwatch;
+
+import net.fabricmc.mappingio.format.Tiny2Reader;
+
+import net.fabricmc.mappingio.format.Tiny2Writer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +48,6 @@ import net.flintloader.steel.configuration.providers.mappings.IntermediateMappin
 
 import net.fabricmc.mappingio.adapter.MappingNsCompleter;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.Tiny2Reader;
-import net.fabricmc.mappingio.format.Tiny2Writer;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 

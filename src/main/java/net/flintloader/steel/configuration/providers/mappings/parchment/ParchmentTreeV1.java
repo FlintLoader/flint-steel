@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +29,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import net.fabricmc.mappingio.MappedElementKind;
+
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.MappingVisitor;
 
 public record ParchmentTreeV1(

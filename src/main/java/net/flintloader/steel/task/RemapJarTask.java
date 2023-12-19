@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021-2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -239,7 +239,7 @@ public abstract class RemapJarTask extends AbstractRemapJarTask {
 		}
 
 		private void remapAccessWidener() throws IOException {
-			final AccessWidenerFile accessWidenerFile = AccessWidenerFile.fromModJar(inputFile);
+			final AccessWidenerFile accessWidenerFile = AccessWidenerFile.fromModuleJar(inputFile);
 
 			if (accessWidenerFile == null) {
 				return;

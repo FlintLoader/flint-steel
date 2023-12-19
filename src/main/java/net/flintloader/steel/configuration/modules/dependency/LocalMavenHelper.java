@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -91,7 +91,7 @@ public final class LocalMavenHelper {
 
 			Files.writeString(getPomPath(), pomTemplate, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			throw new UncheckedIOException("Failed to write mod pom", e);
+			throw new UncheckedIOException("Failed to write module pom", e);
 		}
 	}
 

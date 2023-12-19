@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,12 +46,12 @@ public abstract class ModuleSettings implements Named {
 	/**
 	 * List of classpath directories, or jar files used to populate the `flint.classPathGroups` Flint Loader system property.
 	 */
-	public abstract ConfigurableFileCollection getModFiles();
+	public abstract ConfigurableFileCollection getModuleFiles();
 
 	@Inject
 	public ModuleSettings() {
 		getModSourceSets().finalizeValueOnRead();
-		getModFiles().finalizeValueOnRead();
+		getModuleFiles().finalizeValueOnRead();
 	}
 
 	/**
@@ -93,7 +93,7 @@ public abstract class ModuleSettings implements Named {
 	 * Add a {@link Configuration} to the mod's classpath group. Should be used to include all dependencies that are shaded into your mod.
 	 */
 	public void configuration(Configuration configuration) {
-		getModFiles().from(configuration);
+		getModuleFiles().from(configuration);
 	}
 
 	/**

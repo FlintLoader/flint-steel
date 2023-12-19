@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2016-2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -234,7 +234,7 @@ public final class CompileConfiguration {
 			}
 		}
 
-		if (extension.getEnableModProvidedJavadoc().get()) {
+		if (extension.getEnableModuleProvidedJavadoc().get()) {
 			// This doesn't do any processing on the compiled jar, but it does have an effect on the generated sources.
 			final ModuleJavadocProcessor javadocProcessor = ModuleJavadocProcessor.create(project);
 

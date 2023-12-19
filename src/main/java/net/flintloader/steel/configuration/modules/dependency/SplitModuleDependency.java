@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -112,17 +112,17 @@ public final class SplitModuleDependency extends ModuleDependency {
 		}
 
 		if (target == JarSplitter.Target.SPLIT) {
-			createModGroup(
+			createModuleGroup(
 					getCommonMaven().getOutputFile(null),
 					getClientMaven().getOutputFile(null)
 			);
 		}
 	}
 
-	private void createModGroup(Path commonJar, Path clientJar) {
+	private void createModuleGroup(Path commonJar, Path clientJar) {
 		SteelGradleExtension extension = SteelGradleExtension.get(project);
 		extension.getModules().register(String.format("%s-%s-%s", getRemappedGroup(), name, version), modSettings ->
-				modSettings.getModFiles().from(
+				modSettings.getModuleFiles().from(
 					commonJar.toFile(),
 					clientJar.toFile()
 				)

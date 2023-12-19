@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,12 +44,12 @@ public class ModuleVersionParser {
 		this.project = project;
 	}
 
-	public String getModVersion() {
+	public String getModuleVersion() {
 		if (version != null) {
 			return version;
 		}
 
-		File json = locateModJsonFile();
+		File json = locateModuleJsonFile();
 		JsonObject jsonObject;
 
 		try (var reader = new FileReader(json)) {
@@ -67,7 +67,7 @@ public class ModuleVersionParser {
 		return version;
 	}
 
-	private File locateModJsonFile() {
+	private File locateModuleJsonFile() {
 		return project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets()
 				.getByName("main")
 				.getResources()

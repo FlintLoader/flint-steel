@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021-2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -195,7 +195,7 @@ public class InterfaceInjectionProcessor implements JarProcessor, GenerateSource
 		return extension.getCompileRemapConfigurations().stream()
 				.flatMap(resolve)
 				.filter(runtimeEntries::contains) // Use the intersection of the two configurations.
-				.flatMap(path -> InjectedInterface.fromModJar(path).stream())
+				.flatMap(path -> InjectedInterface.fromModuleJar(path).stream())
 				.toList();
 	}
 
@@ -272,7 +272,7 @@ public class InterfaceInjectionProcessor implements JarProcessor, GenerateSource
 		/**
 		 * Reads the injected interfaces contained in a mod jar, or returns empty if there is none.
 		 */
-		public static List<InjectedInterface> fromModJar(Path modJarPath) {
+		public static List<InjectedInterface> fromModuleJar(Path modJarPath) {
 			final JsonObject jsonObject = ModuleUtils.getFlintModuleJson(modJarPath);
 
 			if (jsonObject == null) {

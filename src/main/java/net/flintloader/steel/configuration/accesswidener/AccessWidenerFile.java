@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ public record AccessWidenerFile(
 	/**
 	 * Reads the access-widener contained in a mod jar, or returns null if there is none.
 	 */
-	public static AccessWidenerFile fromModJar(Path modJarPath) {
+	public static AccessWidenerFile fromModuleJar(Path modJarPath) {
 		byte[] modJsonBytes;
 
 		try {

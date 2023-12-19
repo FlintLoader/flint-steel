@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2021 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -164,7 +164,7 @@ public final class IncludedJarFactory {
 
 		try {
 			FileUtils.copyFile(input, tempFile);
-			ZipUtils.add(tempFile.toPath(), "flintmodule.json", generateModForDependency(metadata).getBytes(StandardCharsets.UTF_8));
+			ZipUtils.add(tempFile.toPath(), "flintmodule.json", generateModuleForDependency(metadata).getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			throw new UncheckedIOException("Failed to add dummy mod while including %s".formatted(input), e);
 		}
@@ -173,7 +173,7 @@ public final class IncludedJarFactory {
 	}
 
 	// Generates a barebones mod for a dependency
-	private static String generateModForDependency(Metadata metadata) {
+	private static String generateModuleForDependency(Metadata metadata) {
 		String modId = (metadata.group() + "_" + metadata.name() + metadata.classifier())
 				.replaceAll("\\.", "_")
 				.toLowerCase(Locale.ENGLISH);

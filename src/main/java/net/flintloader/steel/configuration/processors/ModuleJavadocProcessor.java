@@ -2,7 +2,7 @@
  * This file is part of flint-steel, licensed under the MIT License (MIT).
  *
  * Copyright (c) 2016-2021 FabricMC
- * Copyright (c) 2022 HypherionSA and Contributors
+ * Copyright (c) 2016-2021 Flint Loader Contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,16 +57,16 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree;
 public final class ModuleJavadocProcessor implements JarProcessor, GenerateSourcesTask.MappingsProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ModuleJavadocProcessor.class);
 
-	private final List<ModJavadoc> javadocs;
+	private final List<ModuleJavadoc> javadocs;
 
-	private ModuleJavadocProcessor(List<ModJavadoc> javadocs) {
+	private ModuleJavadocProcessor(List<ModuleJavadoc> javadocs) {
 		this.javadocs = javadocs;
 	}
 
 	@Nullable
 	public static ModuleJavadocProcessor create(Project project) {
 		final SteelGradleExtension extension = SteelGradleExtension.get(project);
-		final List<ModJavadoc> javadocs = new ArrayList<>();
+		final List<ModuleJavadoc> javadocs = new ArrayList<>();
 
 		for (RemapConfigurationSettings entry : extension.getRemapConfigurations()) {
 			final Set<File> artifacts = entry.getSourceConfiguration().get().resolve();
@@ -76,16 +76,16 @@ public final class ModuleJavadocProcessor implements JarProcessor, GenerateSourc
 					continue;
 				}
 
-				final ModJavadoc modJavadoc;
+				final ModuleJavadoc moduleJavadoc;
 
 				try {
-					modJavadoc = ModJavadoc.fromModJar(artifact.toPath());
+					moduleJavadoc = ModuleJavadoc.fromModuleJar(artifact.toPath());
 				} catch (IOException e) {
-					throw new UncheckedIOException("Failed to read mod jar (%s)".formatted(artifact), e);
+					throw new UncheckedIOException("Failed to read module jar (%s)".formatted(artifact), e);
 				}
 
-				if (modJavadoc != null) {
-					javadocs.add(modJavadoc);
+				if (moduleJavadoc != null) {
+					javadocs.add(moduleJavadoc);
 				}
 			}
 		}
@@ -99,7 +99,7 @@ public final class ModuleJavadocProcessor implements JarProcessor, GenerateSourc
 
 	@Override
 	public boolean transform(MemoryMappingTree mappings) {
-		for (ModJavadoc javadoc : javadocs) {
+		for (ModuleJavadoc javadoc : javadocs) {
 			javadoc.apply(mappings);
 		}
 
@@ -120,9 +120,9 @@ public final class ModuleJavadocProcessor implements JarProcessor, GenerateSourc
 		// No need to actually process anything, we need to be a JarProcessor to ensure that the jar is cached correctly.
 	}
 
-	public record ModJavadoc(String modId, MemoryMappingTree mappingTree) {
+	public record ModuleJavadoc(String modId, MemoryMappingTree mappingTree) {
 		@Nullable
-		public static ModJavadoc fromModJar(Path path) throws IOException {
+		public static ModuleJavadocProcessor.ModuleJavadoc fromModuleJar(Path path) throws IOException {
 			JsonObject jsonObject = ModuleUtils.getFlintModuleJson(path);
 
 			if (jsonObject == null || !jsonObject.has("custom")) {
@@ -152,7 +152,7 @@ public final class ModuleJavadocProcessor implements JarProcessor, GenerateSourc
 				throw new IllegalStateException("Javadoc provided by mod (%s) must not contain any dst names".formatted(modId));
 			}
 
-			return new ModJavadoc(modId, mappings);
+			return new ModuleJavadoc(modId, mappings);
 		}
 
 		public void apply(MemoryMappingTree target) {
