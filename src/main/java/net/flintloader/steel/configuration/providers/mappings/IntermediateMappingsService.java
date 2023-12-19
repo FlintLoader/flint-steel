@@ -36,9 +36,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.google.common.base.Suppliers;
-
-import net.fabricmc.mappingio.format.Tiny2Reader;
-
 import org.gradle.api.Project;
 import org.jetbrains.annotations.VisibleForTesting;
 
@@ -50,6 +47,7 @@ import net.flintloader.steel.util.service.SharedService;
 import net.flintloader.steel.util.service.SharedServiceManager;
 
 import net.fabricmc.mappingio.adapter.MappingNsCompleter;
+import net.fabricmc.mappingio.format.Tiny2Reader;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public final class IntermediateMappingsService implements SharedService {

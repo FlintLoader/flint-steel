@@ -38,8 +38,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import net.fabricmc.mappingio.format.Tiny2Writer;
-
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.FileCollectionDependency;
@@ -56,6 +54,7 @@ import net.flintloader.steel.util.ZipUtils;
 
 import net.fabricmc.mappingio.adapter.MappingDstNsReorder;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.format.Tiny2Writer;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 public class LayeredMappingsDependency implements SelfResolvingDependency, FileCollectionDependency {

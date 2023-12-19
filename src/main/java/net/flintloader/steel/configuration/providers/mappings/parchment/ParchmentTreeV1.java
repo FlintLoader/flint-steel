@@ -29,10 +29,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import net.fabricmc.mappingio.MappedElementKind;
-
 import org.jetbrains.annotations.Nullable;
 
+import net.fabricmc.mappingio.MappedElementKind;
 import net.fabricmc.mappingio.MappingVisitor;
 
 public record ParchmentTreeV1(

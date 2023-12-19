@@ -33,8 +33,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.fabricmc.mappingio.format.ProGuardReader;
-
 import org.gradle.api.logging.Logger;
 
 import net.flintloader.steel.api.mappings.layered.MappingLayer;
@@ -44,6 +42,7 @@ import net.flintloader.steel.configuration.providers.mappings.utils.DstNameFilte
 
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.format.ProGuardReader;
 
 public record MojangMappingLayer(Path clientMappings, Path serverMappings, boolean nameSyntheticMembers,
 									Logger logger) implements MappingLayer {

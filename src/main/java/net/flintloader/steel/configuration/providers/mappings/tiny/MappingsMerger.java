@@ -35,11 +35,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Stopwatch;
-
-import net.fabricmc.mappingio.format.Tiny2Reader;
-
-import net.fabricmc.mappingio.format.Tiny2Writer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +43,8 @@ import net.flintloader.steel.configuration.providers.mappings.IntermediateMappin
 
 import net.fabricmc.mappingio.adapter.MappingNsCompleter;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.format.Tiny2Reader;
+import net.fabricmc.mappingio.format.Tiny2Writer;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 

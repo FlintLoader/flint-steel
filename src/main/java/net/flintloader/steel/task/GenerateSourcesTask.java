@@ -46,8 +46,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import net.fabricmc.mappingio.format.Tiny2Writer;
-
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
@@ -83,6 +81,7 @@ import net.flintloader.steel.util.ipc.IPCServer;
 
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
+import net.fabricmc.mappingio.format.Tiny2Writer;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 @DisableCachingByDefault
