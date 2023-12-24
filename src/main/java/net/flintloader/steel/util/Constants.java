@@ -34,6 +34,8 @@ public class Constants {
 	public static final String EXPERIMENTAL_VERSIONS = "https://maven.flintloader.net/releases/net/minecraft/experimental_versions.json";
 	public static final String FLINT_REPOSITORY = "https://maven.flintloader.net/releases/";
 
+	public static final String FLINT_MIRROR = "https://maven.flintloader.net/mirror/";
+
 	public static final int ASM_VERSION = Opcodes.ASM9;
 	public static final String MERCURY_SOURCE_VERSION = "17";
 

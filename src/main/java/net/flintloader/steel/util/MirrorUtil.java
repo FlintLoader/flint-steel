@@ -67,4 +67,12 @@ public class MirrorUtil {
 
 		return Constants.FLINT_REPOSITORY;
 	}
+
+	public static String getFlintMirror(ExtensionAware aware) {
+		if (aware.getExtensions().getExtraProperties().has("steel_flint_mirror_repository")) {
+			return String.valueOf(aware.getExtensions().getExtraProperties().get("steel_flint_mirror_repository"));
+		}
+
+		return Constants.FLINT_MIRROR;
+	}
 }

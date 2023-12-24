@@ -71,6 +71,10 @@ public class SteelRepositoryPlugin implements Plugin<PluginAware> {
 			repo.setName("Flint");
 			repo.setUrl(MirrorUtil.getFlintRepository(target));
 		});
+		repositories.maven(repo -> {
+			repo.setName("Flint Mirror");
+			repo.setUrl(MirrorUtil.getFlintMirror(target));
+		});
 
 		MavenArtifactRepository mojangRepo = repositories.maven(repo -> {
 			repo.setName("Mojang");
