@@ -268,7 +268,7 @@ public class MappingsProviderImpl implements MappingsProvider, SharedService {
 	}
 
 	private UnpickMetadata parseUnpickMetadata(Path input) throws IOException {
-		JsonObject jsonObject = SteelGradlePlugin.GSON.fromJson(Files.readString(input), JsonObject.class);
+		JsonObject jsonObject = SteelGradlePlugin.GSON.fromJson(Files.readString(input, StandardCharsets.UTF_8), JsonObject.class);
 
 		if (!jsonObject.has("version") || jsonObject.get("version").getAsInt() != 1) {
 			throw new UnsupportedOperationException("Unsupported unpick version");
