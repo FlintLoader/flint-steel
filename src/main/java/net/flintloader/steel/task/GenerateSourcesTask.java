@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
+
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
@@ -81,7 +83,6 @@ import net.flintloader.steel.util.ipc.IPCServer;
 
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.Tiny2Writer;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
 @DisableCachingByDefault
@@ -371,7 +372,7 @@ public abstract class GenerateSourcesTask extends AbstractSteelTask {
 		}
 
 		try (Writer writer = Files.newBufferedWriter(outputMappings, StandardCharsets.UTF_8)) {
-			Tiny2Writer tiny2Writer = new Tiny2Writer(writer, false);
+			Tiny2FileWriter tiny2Writer = new Tiny2FileWriter(writer, false);
 			mappingTree.accept(new MappingSourceNsSwitch(tiny2Writer, MappingsNamespace.NAMED.toString()));
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to write mappings", e);

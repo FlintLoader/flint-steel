@@ -96,10 +96,10 @@ public class Constants {
 		 * Constants for versions of dependencies.
 		 */
 		public static final class Versions {
-			public static final String MIXIN_COMPILE_EXTENSIONS = "0.5.0";
+			public static final String MIXIN_COMPILE_EXTENSIONS = "0.6.0";
 			public static final String DEV_LAUNCH_INJECTOR = "1.0.0";
 			public static final String TERMINAL_CONSOLE_APPENDER = "1.2.0";
-			public static final String JETBRAINS_ANNOTATIONS = "23.0.0";
+			public static final String JETBRAINS_ANNOTATIONS = "24.1.0";
 			public static final String NATIVE_SUPPORT_VERSION = "1.0.1";
 
 			private Versions() {

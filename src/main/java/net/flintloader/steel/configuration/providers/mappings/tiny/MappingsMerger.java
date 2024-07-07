@@ -35,6 +35,11 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Stopwatch;
+
+import net.fabricmc.mappingio.format.tiny.Tiny2FileReader;
+
+import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +48,6 @@ import net.flintloader.steel.configuration.providers.mappings.IntermediateMappin
 
 import net.fabricmc.mappingio.adapter.MappingNsCompleter;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.Tiny2Reader;
-import net.fabricmc.mappingio.format.Tiny2Writer;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
 
@@ -59,7 +62,7 @@ public final class MappingsMerger {
 		intermediateMappingsService.getMemoryMappingTree().accept(new MappingSourceNsSwitch(intermediaryTree, MappingsNamespace.INTERMEDIARY.toString()));
 
 		try (BufferedReader reader = Files.newBufferedReader(from, StandardCharsets.UTF_8)) {
-			Tiny2Reader.read(reader, intermediaryTree);
+			Tiny2FileReader.read(reader, intermediaryTree);
 		}
 
 		MemoryMappingTree officialTree = new MemoryMappingTree();
@@ -69,7 +72,7 @@ public final class MappingsMerger {
 
 		inheritMappedNamesOfEnclosingClasses(officialTree);
 
-		try (Tiny2Writer writer = new Tiny2Writer(Files.newBufferedWriter(out, StandardCharsets.UTF_8), false)) {
+		try (Tiny2FileWriter writer = new Tiny2FileWriter(Files.newBufferedWriter(out, StandardCharsets.UTF_8), false)) {
 			officialTree.accept(writer);
 		}
 

@@ -24,13 +24,16 @@
 
 package net.flintloader.steel.kotlin.remapping
 
+import net.flintloader.steel.util.kotlin.KotlinMetadataTinyRemapperExtension
 import net.fabricmc.tinyremapper.TinyRemapper
 import net.fabricmc.tinyremapper.api.TrClass
-import net.flintloader.steel.util.kotlin.KotlinMetadataTinyRemapperExtension
 import org.objectweb.asm.ClassVisitor
 
 object KotlinMetadataTinyRemapperExtensionImpl : KotlinMetadataTinyRemapperExtension {
-    override fun insertApplyVisitor(cls: TrClass, next: ClassVisitor?): ClassVisitor {
+    override fun insertApplyVisitor(
+        cls: TrClass,
+        next: ClassVisitor?,
+    ): ClassVisitor {
         return KotlinMetadataRemappingClassVisitor(cls.environment.remapper, next)
     }
 

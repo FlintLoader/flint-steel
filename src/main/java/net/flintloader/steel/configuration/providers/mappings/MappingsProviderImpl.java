@@ -221,7 +221,7 @@ public class MappingsProviderImpl implements MappingsProvider, SharedService {
 
 	private static boolean areMappingsV2(Path path) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(path)) {
-			return MappingReader.detectFormat(reader) == MappingFormat.TINY_2;
+			return MappingReader.detectFormat(reader) == MappingFormat.TINY_2_FILE;
 		}
 	}
 

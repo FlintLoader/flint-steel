@@ -33,6 +33,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import net.fabricmc.mappingio.format.proguard.ProGuardFileReader;
+
 import org.gradle.api.logging.Logger;
 
 import net.flintloader.steel.api.mappings.layered.MappingLayer;
@@ -42,7 +44,6 @@ import net.flintloader.steel.configuration.providers.mappings.utils.DstNameFilte
 
 import net.fabricmc.mappingio.MappingVisitor;
 import net.fabricmc.mappingio.adapter.MappingSourceNsSwitch;
-import net.fabricmc.mappingio.format.ProGuardReader;
 
 public record MojangMappingLayer(Path clientMappings, Path serverMappings, boolean nameSyntheticMembers,
 									Logger logger) implements MappingLayer {
@@ -60,8 +61,8 @@ public record MojangMappingLayer(Path clientMappings, Path serverMappings, boole
 
 		try (BufferedReader clientBufferedReader = Files.newBufferedReader(clientMappings, StandardCharsets.UTF_8);
 				BufferedReader serverBufferedReader = Files.newBufferedReader(serverMappings, StandardCharsets.UTF_8)) {
-			ProGuardReader.read(clientBufferedReader, MappingsNamespace.NAMED.toString(), MappingsNamespace.OFFICIAL.toString(), nsSwitch);
-			ProGuardReader.read(serverBufferedReader, MappingsNamespace.NAMED.toString(), MappingsNamespace.OFFICIAL.toString(), nsSwitch);
+			ProGuardFileReader.read(clientBufferedReader, MappingsNamespace.NAMED.toString(), MappingsNamespace.OFFICIAL.toString(), nsSwitch);
+			ProGuardFileReader.read(serverBufferedReader, MappingsNamespace.NAMED.toString(), MappingsNamespace.OFFICIAL.toString(), nsSwitch);
 		}
 	}
 
